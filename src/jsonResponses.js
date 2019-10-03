@@ -84,6 +84,16 @@ const addFlowchart = (request, response, body) => {
   // 204 will not alter the browser in any way!!!
   return respondJSONMeta(request, response, responseCode);
 };
+
+const submitFlowchart = (request,response) =>
+{
+    
+};
+
+const submitFlowchartMeta = (request,response) =>
+{
+    
+};
 const notReal = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found',
@@ -101,6 +111,8 @@ module.exports = {
   getFlowcharts,
   getFlowchartsMeta,
   addFlowchart,
+    submitFlowchart,
+    submitFormchartmeta,
   notReal,
   notRealMeta,
 };

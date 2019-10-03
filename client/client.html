@@ -100,10 +100,14 @@ const getFlowcharts = (e, userForm) => {
     return false;
 };
 
+
+let i = 0 //Variable to increase id if necessary to grab individual 
 function changeIt()
 {
-var i = 1;
-my_div.innerHTML = my_div.innerHTML +"<br><textarea type='text' name='mytext'+ i>"
+    let draggable = new Draggable(container,{
+        draggable: "<textarea id='mytext'+ i></textarea>"
+    });
+    i++;
 
 }
 
@@ -111,8 +115,9 @@ my_div.innerHTML = my_div.innerHTML +"<br><textarea type='text' name='mytext'+ i
       //grab form
       const nameForm = document.querySelector('#nameForm');
       const userForm = document.querySelector('#flowchartform');
-     
-      
+      const addButton = document.querySelector('#addButton')
+      const submitForm = document.querySelector('#submitForm')
+      const container = document.querySelector('#content');
      
       //create handler
       const addFlowchart = (e) => sendPost(e, nameForm);
@@ -122,6 +127,10 @@ my_div.innerHTML = my_div.innerHTML +"<br><textarea type='text' name='mytext'+ i
       userForm.addEventListener('submit', getFlowchart);
       //attach submit event (for clicking submit or hitting enter)
       nameForm.addEventListener('submit', addFlowchart);
+     
+        submitForm.addEventListener('submit', submitForm);
+     
+     addButton.addEventListener('click',changeIt)
     };
 
     window.onload = init;
@@ -142,11 +151,10 @@ my_div.innerHTML = my_div.innerHTML +"<br><textarea type='text' name='mytext'+ i
     </section>
     <section id="content">
         <div id="my_div"></div>
-        <form name="form" action="post" method="">
-<input type="text" name=t1>
-<input type="button" value="test" onClick="changeIt()">
+        <form id="submitForm"  action="/submitFlowchart" method="post">
         </form>
     </section>
+    <section id ="controls"><input type="button" id='addButton'></section>
 </body>
 
 </html>
