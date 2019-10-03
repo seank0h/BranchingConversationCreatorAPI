@@ -1,0 +1,32 @@
+{
+  "name": "branchingconversationcreatorapi",
+  "version": "1.0.0",
+  "description": "Web Api for creating branching conversations",
+  "main": "./src/server.js",
+  "scripts": {
+    "nodemon": "nodemon -e js,html,css --watch ./src --watch ./src --watch ./hosted ./src/server.js",
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seank0h/BranchingConversationCreatorAPI.git"
+  },
+  "author": "Sean Koh",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/seank0h/BranchingConversationCreatorAPI/issues"
+  },
+  "homepage": "https://github.com/seank0h/BranchingConversationCreatorAPI#readme",
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "nodemon": "^1.19.3"
+  },
+  "dependencies": {
+    "@shopify/draggable": "^1.0.0-beta.8",
+    "autosize": "^4.0.2"
+  }
+}

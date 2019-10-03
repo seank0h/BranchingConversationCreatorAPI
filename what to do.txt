@@ -1,0 +1,10 @@
+Post: Creating a flowchart with a name with all the necessary text information and stuff
+After Finishing, have button to update the first post 
+Get: Get flowcharts created.Load it into the content area: So save all the data
+    -Final build will have a searchbar for you to search for specific flowchart
+Final, Final Version: Will have a user account and only search for your flowcharts
+
+Client Side: After creation of flowchart create a content area where the text bubbles will show up
+-You put in your text and you shift click blocks and there will be button that you can click that will create a line between them
+-Be able to click and move the text boxes
+-Create a side column where there is a button to add another block of text: Aka create controls sidebar
