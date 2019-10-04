@@ -85,9 +85,12 @@ const addFlowchart = (request, response, body) => {
   return respondJSONMeta(request, response, responseCode);
 };
 
-const submitFlowchart = (request,response) =>
+const submitFlowchart = (request,response,body) =>
 {
-    
+     const responseJSON = {
+    message: 'Submit Valid Flowchart',
+  };
+  console.log(body);
 };
 
 const submitFlowchartMeta = (request,response) =>
@@ -112,7 +115,7 @@ module.exports = {
   getFlowchartsMeta,
   addFlowchart,
     submitFlowchart,
-    submitFormchartmeta,
+    submitFlowchartMeta,
   notReal,
   notRealMeta,
 };
