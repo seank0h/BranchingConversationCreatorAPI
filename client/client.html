@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Our simple HTTP server</title>
     <link rel="stylesheet" type="text/css" href="/style.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-    <script type="text/babel">
+ 
+    <!-- <script src="../node_modules/jquery/dist/jquery.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+       <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-const parseJSON = (xhr, content) => {
+
+<script type="text/babel">
+let textBoxArray = []//Array to hold the textboxes
+let textboxCount = 0 //Variable to increase id if necessary to grab individual 
+        const parseJSON = (xhr, content) => {
       //parse response (obj will be empty in a 204 updated)
       const obj = JSON.parse(xhr.response);
       
@@ -64,6 +73,8 @@ const sendPost = (e, nameForm) => {
       const nameMethod = nameForm.getAttribute('method');
       //grab the form's name and age fields so we can check user input
       const nameField = nameForm.querySelector('#nameField');
+      const container = document.querySelector('#content')
+      const texts = container.querySelectorAll('textarea');
       //create a new Ajax request (remember this is asynchronous)
       const xhr = new XMLHttpRequest();
       //set the method (POST) and url (action field from form)
@@ -74,7 +85,7 @@ const sendPost = (e, nameForm) => {
       xhr.setRequestHeader ('Accept', 'application/json');
       //set our function to handle the response
       xhr.onload = () => handleResponse(xhr);
-      const formData = `name=${nameField.value}`;
+      const formData = `name=${nameField.value}&text=${textBoxArray}`;
       //send our request with the data
       xhr.send(formData);
       //prevent the browser's default action (to send the form on its own)
@@ -100,37 +111,88 @@ const getFlowcharts = (e, userForm) => {
     return false;
 };
 
-
-let i = 0 //Variable to increase id if necessary to grab individual 
-function changeIt()
+//Helper Function to update text box and send accurate textarea data
+//Sending in parameter of the specific textbox to update
+function updateTexts(e,count)
 {
-    let draggable = new Draggable(container,{
-        draggable: "<textarea id='mytext'+ i></textarea>"
-    });
-    i++;
-
+  const curText = document.querySelector(`#textarea${count}`);
+  textBoxArray[count] = curText.value;
+  return false;
 }
+function createTextBox(e)
+{
+
+      textboxCount++;
+      for(let i =0; i<textboxCount;i++)
+      {
+        //To place the draggable within container when first spawned
+        const new_offset = {top:30, left:30};
+   const new_width = 300;
+   const new_height = 250;
+   //Setting attribute of the textbox
+   let newTextBox =$(`<div><textarea id="text${i}"></textarea></div>`)
+          
+            .width(new_width)//Initial Height 
+            .height(new_height)//Initial textbox width
+
+             //Draggable Functionality with being able to drag the textarea
+            .draggable({
+              cancel: "text",
+    start: function (){
+        $('textarea').focus();
+    },
+    stop: function (){
+        $('textarea').focus();
+    }, 
+                //handle:'.texthandler',
+                 containment: "#content",
+                 scroll: false, 
+             })
+             .resizable()
+
+   //Css for the text area
+            .css({
+            		'position'	        : 'absolute',
+            		'background-color'  : 'beige',
+            		'border-color'      : 'black',
+            		'border-width'      : '1px',
+                'border-style'	    : 'solid',
+                'color'             : 'grey'
+             })
+   //When creating text area where to place
+             .offset(new_offset)
+   //Restrict the draggable to the container
+   
+   //Append the text area to the container
+             .appendTo('#content')
+    //Helper method to keep track of text change in boxes
+        const updateValue = (e) => updateTexts(e,i)
+    //Event Listener to observe change of state of textarea
+       .addEventListener('change',updateValue)
+      }
+     
+      return false;
+};
 
  const init = () => {
       //grab form
       const nameForm = document.querySelector('#nameForm');
       const userForm = document.querySelector('#flowchartform');
-      const addButton = document.querySelector('#addButton')
-      const submitForm = document.querySelector('#submitForm')
+      const addButton = document.querySelector('#addButton');
       const container = document.querySelector('#content');
      
       //create handler
       const addFlowchart = (e) => sendPost(e, nameForm);
       
       const getFlowchart = (e) => getFlowcharts(e, userForm);
+
+      const addTextBox = (e) => createTextBox(e);
       //add event listener
       userForm.addEventListener('submit', getFlowchart);
       //attach submit event (for clicking submit or hitting enter)
       nameForm.addEventListener('submit', addFlowchart);
      
-        submitForm.addEventListener('submit', submitForm);
-     
-     addButton.addEventListener('click',changeIt)
+     addButton.addEventListener('click',addTextBox);
     };
 
     window.onload = init;
@@ -140,21 +202,18 @@ function changeIt()
 <body>
     <section id="top">
         <h3>Create Your Own Visual FlowChart</h3>
-         <form id="nameForm" action="/addFlowchart" method="post">
+        <form id="nameForm" action="/addFlowchart" method="post">
             <label for="name">Name: </label>
             <input id="nameField" type="text" name="name" />
             <input type="submit" value="Add Flowchart" />
         </form>
-         <form id="flowchartform" action="/getFlowcharts" method="get">
-            <input type="submit" value="Get FlowCharts"/>
+        <form id="flowchartform" action="/getFlowcharts" method="get">
+            <input type="submit" value="Get FlowCharts" />
         </form>
     </section>
-    <section id="content">
-        <div id="my_div"></div>
-        <form id="submitForm"  action="/submitFlowchart" method="post">
-        </form>
-    </section>
-    <section id ="controls"><input type="button" id='addButton'></section>
+     <section id="controls"><input type="button" id='addButton' value = "Add Conversation Node"></section>
+    <div id="content">
+    </div> 
 </body>
 
 </html>

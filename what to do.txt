@@ -7,5 +7,5 @@ Final, Final Version: Will have a user account and only search for your flowchar
 Client Side: After creation of flowchart create a content area where the text bubbles will show up
 -You put in your text and you shift click blocks and there will be button that you can click that will create a line between them
 -Be able to click and move the text boxes
--Create a side column where there is a button to add another block of text: Aka create controls sidebar
+-Create a side column where there is a button to add another block of text: Aka create controls sidebarnpm
 -Update autosizer for textarea

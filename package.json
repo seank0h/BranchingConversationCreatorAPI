@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@shopify/draggable": "^1.0.0-beta.8",
-    "autosize": "^4.0.2"
+    "autosize": "^4.0.2",
+    "jquery": "^3.4.1"
   }
 }

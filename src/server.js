@@ -14,14 +14,12 @@ const urlStruct = {
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCSS,
     '/getFlowcharts': jsonHandler.getFlowcharts,
-    '/submitFlowchart':jsonHandler.submitFlowchart,
     notReal: jsonHandler.notReal,
 
   },
   HEAD: {
     '/getFlowcharts': jsonHandler.getFlowchartsMeta,
     '/notReal': jsonHandler.notRealMeta,
-    '/submitFlowchart':jsonHandler.submitFlowchartmeta,
     notFound: jsonHandler.notFound,
   },
   POST:
@@ -34,7 +32,7 @@ const urlStruct = {
 // handle POST requests
 const handlePost = (request, response, parsedUrl) => {
   // if post is to /addUser (our only POST url)
-  if (parsedUrl.pathname === '/addFlowchart' || parsedUrl.pathname == '/submitFlowchart') {
+  if (parsedUrl.pathname === '/addFlowchart') {
     const res = response;
 
     // uploads come in as a byte stream that we need
@@ -68,8 +66,6 @@ const handlePost = (request, response, parsedUrl) => {
       // pass to our addFlowchart function
         if(parsedUrl.pathname === '/addFlowchart')
       jsonHandler.addFlowchart(request, res, bodyParams);
-        else
-            jsonHandler.submitFlowchart(request,res,bodyParams);
     });
       
       

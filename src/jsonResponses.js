@@ -2,8 +2,17 @@
 // When node shuts down this will be cleared.
 // Same when your heroku app shuts down from inactivity
 // We will be working with databases in the next few weeks.
-const flowcharts = {};
+const flowcharts = {
+  0:
+  {
+    name:"",
+    textbox:{
+      0:"",
+    }
+  }
+};
 
+let flowChartsCount = 0;
 // function to respond with a json object
 // takes request, response, status code and object to send
 const respondJSON = (request, response, status, object) => {
@@ -48,7 +57,7 @@ const addFlowchart = (request, response, body) => {
   const responseJSON = {
     message: 'Name required.',
   };
-  console.log(body);
+  
   // check to make sure we have both fields
   // We might want more validation than just checking if they exist
   // This could easily be abused with invalid types (such as booleans, numbers, etc)
@@ -57,27 +66,26 @@ const addFlowchart = (request, response, body) => {
     responseJSON.id = 'missingParams';
     return respondJSON(request, response, 400, responseJSON);
   }
-
+  //New flowchart to add to overall flowchart database
+  const newFlowchart = {
+    name:body.name,
+    textbox:{
+      0: body.textbox,
+    }
+  };
   // default status code to 201 created
   let responseCode = 201;
-
-  // if that user's name already exists in our object
-  // then switch to a 204 updated status
-  if (flowcharts[body.name]) {
-    responseCode = 204;
-  } else {
-    // otherwise create an object with that name
-    flowcharts[body.name] = {};
-  }
-
+  flowcharts[flowChartsCount] ={};
   // add or update fields for this user name
-  flowcharts[body.name].name = body.name;
-
+  flowcharts[flowChartsCount].name = newFlowchart.name;
+  flowCharts[flowChartsCount][name][textbox][body.count] = newFlowchart.textbox;
+  console.log(body);
   // if response is created, then set our created message
   // and sent response with a message
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
     return respondJSON(request, response, responseCode, responseJSON);
+ 
   }
   // 204 has an empty payload, just a success
   // It cannot have a body, so we just send a 204 without a message
@@ -85,18 +93,6 @@ const addFlowchart = (request, response, body) => {
   return respondJSONMeta(request, response, responseCode);
 };
 
-const submitFlowchart = (request,response,body) =>
-{
-     const responseJSON = {
-    message: 'Submit Valid Flowchart',
-  };
-  console.log(body);
-};
-
-const submitFlowchartMeta = (request,response) =>
-{
-    
-};
 const notReal = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found',
@@ -114,8 +110,6 @@ module.exports = {
   getFlowcharts,
   getFlowchartsMeta,
   addFlowchart,
-    submitFlowchart,
-    submitFlowchartMeta,
   notReal,
   notRealMeta,
 };
