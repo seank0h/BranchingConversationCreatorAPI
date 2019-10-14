@@ -64,11 +64,8 @@ const handlePost = (request, response, parsedUrl) => {
       const bodyParams = query.parse(bodyString);
 
       // pass to our addFlowchart function
-        if(parsedUrl.pathname === '/addFlowchart')
-      jsonHandler.addFlowchart(request, res, bodyParams);
+      if (parsedUrl.pathname === '/addFlowchart') { jsonHandler.addFlowchart(request, res, bodyParams); }
     });
-      
-      
   }
 };
 const onRequest = (request, response) => {
@@ -80,7 +77,7 @@ const onRequest = (request, response) => {
   } else if (urlStruct[request.method][parsedUrl.pathname]) {
     urlStruct[request.method][parsedUrl.pathname](request, response);
   } else {
-     urlStruct[request.method].notReal(request, response);
+    urlStruct[request.method].notReal(request, response);
   }
 };
 

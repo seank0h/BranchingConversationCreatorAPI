@@ -4,7 +4,7 @@
 <head>
     <title>Our simple HTTP server</title>
     <link rel="stylesheet" type="text/css" href="/style.css">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
  
     <!-- <script src="../node_modules/jquery/dist/jquery.min.js"></script> -->
@@ -14,40 +14,132 @@
 
 
 <script type="text/babel">
-let textBoxArray = []//Array to hold the textboxes
-let textboxCount = 0 //Variable to increase id if necessary to grab individual 
+let textBoxArray = [];//Array to hold the textboxes
+let textboxCount;//Variable to increase id if necessary to grab individual 
+function makeDraggable()
+{
+
+  $(".textContainer").draggable({
+                                cancel: "text",
+                                start: function (){
+                                    $("textarea").focus();
+                                 },
+                                stop: function (){
+                                    $("textarea").focus();
+                                 },
+                                 containment: "#content" 
+                                 
+                             });
+ 
+}
+function createTextBox(e,obj)
+{
+  
+  const new_offset = {top:90, left:30};
+  const width = 300;
+        const height = 250;
+        
+   //Creating and setting attributes of textbox
+   if(obj)
+   {
+     
+     for(let i =0; i <obj.textBoxCount; i++)
+     {
+      console.log("Number of Flowchart to Load: "+obj.flowChartsCount);
+      let tempCount = obj.flowChartsCount;
+
+       console.log("Name of Flowchart to Load: "+obj.flowcharts[0].name);
+      console.log("Current Debug: " + obj.flowcharts[tempCount].textbox[tempCount]);
+      //Creating Text Box with text from existing text in the obj flowchart
+      let newTextContainer =$(`<div class="text-center textContainer"><textarea class="text-center" id="text${textboxCount}">${obj.flowcharts[tempCount].textbox[i]}</textarea></div>`)
+      .width(width)
+  .height(height)
+  .css({
+    'color'	            : 'white',
+    'position'	        : 'absolute',
+    'background-color'  : 'purple',
+    'border-radius'      : '15px',
+             }) //Append the text area to the container
+      .appendTo('#content');
+      makeDraggable();
+      textboxCount++;
+
+     }
+//To place the draggable within container after all textboxes spawn
+  
+     return false;
+   }
+
+   else{
+    let newTextContainer =$(`<div class="text-center textContainer"><textarea id="text${textboxCount}"></textarea></div>`)  
+     .width(width)
+  .height(height)
+  .css({
+              'color'	            : 'white',
+              'position'	        : 'absolute',
+              'background-color'  : 'purple',
+              'border-color'      : 'black',
+              'border-style'      : 'solid',
+              'border-width'      : '1px',
+              'border-radius'      : '15px',
+             })
+     .appendTo('#content');
+     textboxCount++;
+    makeDraggable();
+    return false;
+   }
+};
+
         const parseJSON = (xhr, content) => {
       //parse response (obj will be empty in a 204 updated)
       const obj = JSON.parse(xhr.response);
       
-      //if message in response, add to screen
-      if(obj.message) {
-        const p = document.createElement('p');
-        p.textContent = `Message: ${obj.message}`;
-        content.appendChild(p);
-      }
+ 
       
-      //if users in response, add to screen
-      if(obj.users) {
-        const userList = document.createElement('p');
-        const users = JSON.stringify(obj.users);
-        userList.textContent = users;
-        content.appendChild(userList);
+      //if flowcharts in response, create buttons that will load all existing flowcharts
+      if(obj.flowcharts) {
+        let message = $("<div class=row text-center><h3 class=text-center>Existing Flowcharts: </h3></div>")
+        .appendTo(content)
+        const width = 150;
+        const height = 100;
+       for(let i =0; i<obj.flowChartsCount; i++)
+       {
+        //console.log("Current Debug: "+obj.flowcharts[i]);
+        let flowchart = obj.flowcharts[i];
+        //console.log(flowchart.name);
+         let flowchartBox = $(`<div class="row text-center"><div class="col-md-6"><input type="button" class="rounded" id=${flowchart.name} value=${flowchart.name}></div></div>`)
+         .width(width)
+         .height(height)
+         .appendTo(content)
+         //Loading The Boxes
+         $(`#${flowchart.name}`).on('click',function (e){
+          for(let i =0; i<obj.flowChartsCount; i++)
+              {
+                 //console.log("Button Value: "+$(this).val());
+                 //Confirms name of button to correct one in flowcharts
+                   if($(this).val()==obj.flowcharts[i].name)
+                   //Create Textboxes of the specified flowchart
+                    createTextBox(e,obj);
+             }
+         });
+       }
+       
       }
     };
 const handleResponse =(xhr)=>
 {
-     const content = document.querySelector('#content');
-      
+     const content = $("#existingFlowcharts");
+      let message;
       switch(xhr.status) {
         case 200: //if success
-          content.innerHTML = `<b>Success</b>`;
+          message = $("<div class=text-center><h2>Success</div>")
+            message.appendTo(content);
           break;
         case 201: //if created
-          content.innerHTML = '<b>Create</b>';
+          content.innerHTML = '<b>Created Your Flowchart</b>';
           break;
         case 204: //updated (no response back from server)
-          content.innerHTML = '<b>Updated </b>';
+          content.innerHTML = '<b>Updated Your Flowchart</b>';
           return;
         case 400: //if bad request
           content.innerHTML = `<b>Bad Request</b>`;
@@ -61,9 +153,10 @@ const handleResponse =(xhr)=>
       }
     
       if (xhr.response !== ""){
-                console.log(JSON.parse(xhr.response));
+                console.log("JSON parse: "+JSON.parse(xhr.response));
                 parseJSON(xhr, content);
             }
+
 }
 const sendPost = (e, nameForm) => {
 
@@ -75,6 +168,12 @@ const sendPost = (e, nameForm) => {
       const nameField = nameForm.querySelector('#nameField');
       const container = document.querySelector('#content')
       const texts = container.querySelectorAll('textarea');
+      
+      //Adding all text content to area
+      for(let i =0; i<textboxCount;i++)
+      {
+        textBoxArray[i]=texts[i].value;
+      }
       //create a new Ajax request (remember this is asynchronous)
       const xhr = new XMLHttpRequest();
       //set the method (POST) and url (action field from form)
@@ -85,20 +184,25 @@ const sendPost = (e, nameForm) => {
       xhr.setRequestHeader ('Accept', 'application/json');
       //set our function to handle the response
       xhr.onload = () => handleResponse(xhr);
-      const formData = `name=${nameField.value}&text=${textBoxArray}`;
+      const formData = `name=${nameField.value}&text=${textBoxArray}&textBoxCount=${textboxCount}`;
       //send our request with the data
       xhr.send(formData);
+        //Clearing Name of Flowchart
+        $("#nameField").val('');
+        //Clear Texts
+      clearTexts(e);
       //prevent the browser's default action (to send the form on its own)
       e.preventDefault();
+      console.log("This is textbox: "+textBoxArray);
+    
       //return false to prevent the browser from trying to change page
       return false;
     };
 const getFlowcharts = (e, userForm) => {
             
+    const type = userForm.getAttribute('method');
+    const url = userForm.getAttribute('action');
 
-    console.dir(url);
-    console.dir(type);
-    
      const xhr = new XMLHttpRequest(); 
      
      xhr.open(type, url); 
@@ -107,92 +211,45 @@ const getFlowcharts = (e, userForm) => {
      xhr.send();
      
      e.preventDefault();
-     //return false to prevent the browser from trying to change page
-    return false;
+     return false;
+  
+   
 };
+
 
 //Helper Function to update text box and send accurate textarea data
 //Sending in parameter of the specific textbox to update
-function updateTexts(e,count)
+
+
+function clearTexts(e)
 {
-  const curText = document.querySelector(`#textarea${count}`);
-  textBoxArray[count] = curText.value;
+  $(".textContainer").remove();
+  textboxCount = 0;
   return false;
 }
-function createTextBox(e)
-{
-
-      textboxCount++;
-      for(let i =0; i<textboxCount;i++)
-      {
-        //To place the draggable within container when first spawned
-        const new_offset = {top:30, left:30};
-   const new_width = 300;
-   const new_height = 250;
-   //Setting attribute of the textbox
-   let newTextBox =$(`<div><textarea id="text${i}"></textarea></div>`)
-          
-            .width(new_width)//Initial Height 
-            .height(new_height)//Initial textbox width
-
-             //Draggable Functionality with being able to drag the textarea
-            .draggable({
-              cancel: "text",
-    start: function (){
-        $('textarea').focus();
-    },
-    stop: function (){
-        $('textarea').focus();
-    }, 
-                //handle:'.texthandler',
-                 containment: "#content",
-                 scroll: false, 
-             })
-             .resizable()
-
-   //Css for the text area
-            .css({
-            		'position'	        : 'absolute',
-            		'background-color'  : 'beige',
-            		'border-color'      : 'black',
-            		'border-width'      : '1px',
-                'border-style'	    : 'solid',
-                'color'             : 'grey'
-             })
-   //When creating text area where to place
-             .offset(new_offset)
-   //Restrict the draggable to the container
-   
-   //Append the text area to the container
-             .appendTo('#content')
-    //Helper method to keep track of text change in boxes
-        const updateValue = (e) => updateTexts(e,i)
-    //Event Listener to observe change of state of textarea
-       .addEventListener('change',updateValue)
-      }
-     
-      return false;
-};
 
  const init = () => {
       //grab form
       const nameForm = document.querySelector('#nameForm');
       const userForm = document.querySelector('#flowchartform');
       const addButton = document.querySelector('#addButton');
+      const clearButton = document.querySelector('#clearText');
       const container = document.querySelector('#content');
-     
+     textboxCount = 0;
       //create handler
       const addFlowchart = (e) => sendPost(e, nameForm);
       
       const getFlowchart = (e) => getFlowcharts(e, userForm);
 
       const addTextBox = (e) => createTextBox(e);
-      //add event listener
+
+      const clearText = (e) => clearTexts(e);
+      ////attach submit event (for clicking submit or hitting enter)
       userForm.addEventListener('submit', getFlowchart);
-      //attach submit event (for clicking submit or hitting enter)
       nameForm.addEventListener('submit', addFlowchart);
-     
      addButton.addEventListener('click',addTextBox);
+     clearButton.addEventListener('click',clearText);
+
     };
 
     window.onload = init;
@@ -200,20 +257,39 @@ function createTextBox(e)
 </head>
 
 <body>
+    <div class ="container">
     <section id="top">
         <h3>Create Your Own Visual FlowChart</h3>
         <form id="nameForm" action="/addFlowchart" method="post">
-            <label for="name">Name: </label>
-            <input id="nameField" type="text" name="name" />
-            <input type="submit" value="Add Flowchart" />
+            <label for="name">Flowchart Title: </label>
+            <input id="nameField" type="text" name="name" placeholder="Give Your Flowchart a Name!"/>
+            <input type="submit" class="rounded" value="Add Flowchart" />
         </form>
-        <form id="flowchartform" action="/getFlowcharts" method="get">
-            <input type="submit" value="Get FlowCharts" />
-        </form>
+       
     </section>
-     <section id="controls"><input type="button" id='addButton' value = "Add Conversation Node"></section>
-    <div id="content">
-    </div> 
+    <div class="row"><br></div>
+    <div class="row">
+      <div class="col-4"></div>
+    <div id="controlDiv"class="col-4 text-center">
+      <h3>Controls:</h3>
+        <section id="controls">
+         <input type="button" id='addButton' class="rounded" value = "Add Text Box">
+         <input type="button" id='clearText' class="rounded" value = "Remove Text Boxes">
+         <form id="flowchartform" action="/getFlowcharts" method="get">
+      <input type="submit" value="Get FlowCharts" />
+       </form>
+        </section>
+     </div>
+     <div class="col-4"></div>
+    </div>
+    <br>
+   <div class="row text-center" >
+      <div class="col-4"></div>
+      <div class="col-4" id="existingFlowcharts"></div>
+      <div class="col-4"></div>
+   </div>
+  </div>
+  <div class="text-center text-white" id="content"></div> 
 </body>
 
 </html>
